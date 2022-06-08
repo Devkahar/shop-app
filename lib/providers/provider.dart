@@ -36,8 +36,21 @@ class Products with ChangeNotifier{
     ),
   ];
 
+  // bool _isFavouriteSelected = false;
+  // void markIsFavourite(){
+  //   _isFavouriteSelected= true;
+  //   notifyListeners();
+  // }
+  // void markSelectAll(){
+  //   _isFavouriteSelected= false;
+  //   notifyListeners();
+  // }
   List<Product> get items{
     return [..._items];
+  }
+
+  List<Product> get favouriteItem{
+    return [...items.where((element) => element.isFavourite)];
   }
 
   Product findById(String id){

@@ -25,8 +25,8 @@ class MyApp extends StatelessWidget {
         ),
         // onGenerateRoute: Routing.onGenerateRoute,
         routes: {
-          '/': (ctx)=> ProductsOverviewScreen(),
-          '/product-detail': (ctx)=> const ProductDetailScreen(),
+          '/': (ctx)=> const ProductsOverviewScreen(),
+          '/product-detail': (ctx)=>  const ProductDetailScreen(),
         },
       ),
     );
