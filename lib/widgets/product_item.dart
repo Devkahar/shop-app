@@ -1,28 +1,47 @@
 import 'package:flutter/material.dart';
-
+import 'package:shop_app/screens/routing/routing.dart';
+import 'package:provider/provider.dart';
+import '../providers/product.dart';
 class ProductItem extends StatelessWidget {
-  final String id;
-  final String title;
-  final String imageUrl;
-  const ProductItem(
-      {Key? key, required this.id, required this.title, required this.imageUrl})
-      : super(key: key);
+  const ProductItem({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final product = Provider.of<Product>(context);
+    void redirectProductDetailScreen() {
+      Navigator.of(context).pushNamed(
+        Routing.productDetailScreenName,
+        arguments: product.id,
+      );
+    }
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.0),
       child: GridTile(
         footer: GridTileBar(
           backgroundColor: Colors.black54,
-         leading: GestureDetector(onTap: (){},child:  Icon(Icons.favorite,color: Theme.of(context).primaryColor,)),
-         title: Text(title),
-          trailing:  GestureDetector(onTap: (){},child: Icon(Icons.shopping_cart,color: Theme.of(context).primaryColor,)),
-
+          leading: GestureDetector(
+              onTap: ()=> product.toggleIsFavourite(),
+              child: Icon(
+                Icons.favorite,
+                color: product.isFavourite?Theme.of(context).primaryColor: Colors.white,
+              )),
+          title: Text(product.title),
+          trailing: GestureDetector(
+              onTap: (){},
+              child: Icon(
+                Icons.shopping_cart,
+                color: Theme.of(context).primaryColor,
+              )),
         ),
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
+        child: GestureDetector(
+          onTap: () => redirectProductDetailScreen(),
+          child: Image.network(
+            product.imageUrl,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
