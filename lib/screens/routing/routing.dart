@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
 import 'package:shop_app/screens/products_overview_screen.dart';
 
 class Routing {
   static const productOverviewScreenName = '/';
   static const productDetailScreenName = '/product-detail';
+  static const cartScreenName = '/cart';
 
   static MaterialPageRoute? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -15,6 +17,10 @@ class Routing {
       case productDetailScreenName:
         return MaterialPageRoute(
           builder: (context) => const ProductDetailScreen(),
+        );
+      case cartScreenName:
+        return MaterialPageRoute(
+          builder: (context) => const CartScreen(),
         );
       default:
         return MaterialPageRoute(
