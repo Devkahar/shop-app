@@ -33,7 +33,10 @@ class Cart with ChangeNotifier {
     });
     return total;
   }
-
+  void removeItem(String productId){
+    _items.removeWhere((key, value) => value.id == productId);
+    notifyListeners();
+  }
   void addItems(String productId, String title, double price) {
     if (_items.containsKey(productId)) {
       //.. Change qty;
