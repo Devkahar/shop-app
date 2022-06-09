@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/product.dart';
+import 'package:shop_app/widgets/badge.dart';
 import 'package:shop_app/widgets/product_grid.dart';
 import 'package:shop_app/widgets/product_item.dart';
 import '../providers/provider.dart';
@@ -48,7 +50,16 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 child: Text('Show All'),
               ),
             ],
-          )
+          ),
+          Consumer<Cart>(
+            builder: (_, cart, __) => Badge(
+              value: cart.totaItems.toString(),
+              child: IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {},
+              ),
+            ),
+          ),
         ],
       ),
       body: ProductGride(selectFavourite: favouriteSelected),

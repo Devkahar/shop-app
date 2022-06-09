@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/screens/routing/routing.dart';
 import 'package:provider/provider.dart';
 import '../providers/product.dart';
+
 class ProductItem extends StatelessWidget {
   const ProductItem({
     Key? key,
@@ -9,7 +11,8 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context);
+    final product = Provider.of<Product>(context, listen: false);
+    final cart = Provider.of<Cart>(context,listen: false);
     void redirectProductDetailScreen() {
       Navigator.of(context).pushNamed(
         Routing.productDetailScreenName,
@@ -17,20 +20,29 @@ class ProductItem extends StatelessWidget {
       );
     }
 
+
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.0),
       child: GridTile(
         footer: GridTileBar(
           backgroundColor: Colors.black54,
-          leading: GestureDetector(
-              onTap: ()=> product.toggleIsFavourite(),
+          leading: Consumer<Product>(
+            builder: (ctx,product,_)=> GestureDetector(
+              onTap: () => product.toggleIsFavourite(),
               child: Icon(
                 Icons.favorite,
-                color: product.isFavourite?Theme.of(context).primaryColor: Colors.white,
-              )),
+                color: product.isFavourite
+                    ? Theme.of(context).primaryColor
+                    : Colors.white,
+              ),
+            ),
+          ),
           title: Text(product.title),
           trailing: GestureDetector(
-              onTap: (){},
+              onTap: () {
+                cart.addItems(product.id, product.title, product.price);
+              },
               child: Icon(
                 Icons.shopping_cart,
                 color: Theme.of(context).primaryColor,
