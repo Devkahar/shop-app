@@ -4,7 +4,7 @@ import 'package:uuid/uuid.dart';
 class CartItem {
   final String id;
   final String title;
-  final int quantity;
+  int quantity;
   final double price;
 
   CartItem(
@@ -35,6 +35,16 @@ class Cart with ChangeNotifier {
   }
   void removeItem(String productId){
     _items.removeWhere((key, value) => value.id == productId);
+    notifyListeners();
+  }
+
+  void removeSingleItem(String productId){
+    if(!_items.containsKey(productId)) return;
+    if(_items[productId]!.quantity>1){
+      _items[productId]!.quantity--;
+    }else{
+      _items.remove(productId);
+    }
     notifyListeners();
   }
 

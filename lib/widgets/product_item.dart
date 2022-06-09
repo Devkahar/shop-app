@@ -12,7 +12,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
-    final cart = Provider.of<Cart>(context,listen: false);
+    final cart = Provider.of<Cart>(context, listen: false);
     void redirectProductDetailScreen() {
       Navigator.of(context).pushNamed(
         Routing.productDetailScreenName,
@@ -20,15 +20,13 @@ class ProductItem extends StatelessWidget {
       );
     }
 
-
-
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.0),
       child: GridTile(
         footer: GridTileBar(
           backgroundColor: Colors.black54,
           leading: Consumer<Product>(
-            builder: (ctx,product,_)=> GestureDetector(
+            builder: (ctx, product, _) => GestureDetector(
               onTap: () => product.toggleIsFavourite(),
               child: Icon(
                 Icons.favorite,
@@ -42,6 +40,21 @@ class ProductItem extends StatelessWidget {
           trailing: GestureDetector(
               onTap: () {
                 cart.addItems(product.id, product.title, product.price);
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Item Added To Cart Successfully'),
+                    duration: const Duration(seconds: 2),
+                    action: SnackBarAction(
+                      label: 'UNDO',
+                      onPressed: (){
+                        //Delete Item.
+                        print("item Deleted");
+                        cart.removeSingleItem(product.id);
+                      },
+                    ),
+                  ),
+                );
               },
               child: Icon(
                 Icons.shopping_cart,
