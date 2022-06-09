@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/cart.dart' show Cart;
+import 'package:shop_app/providers/order.dart';
+import 'package:shop_app/screens/routing/routing.dart';
 import '../widgets/cart_items.dart';
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -9,6 +11,7 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
     final cartItems = cart.items.values.toList();
+    final order = Provider.of<Order>(context,listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cart'),
@@ -37,7 +40,11 @@ class CartScreen extends StatelessWidget {
                     width: 10,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      order.addOrder(cartItems, cart.totalAmount,);
+                      cart.clear();
+                      Navigator.of(context).pushNamed(Routing.orderScreenName);
+                    },
                     child: const Text(
                       'ORDER NOW',
                     ),

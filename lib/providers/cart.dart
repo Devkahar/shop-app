@@ -37,6 +37,11 @@ class Cart with ChangeNotifier {
     _items.removeWhere((key, value) => value.id == productId);
     notifyListeners();
   }
+
+  void clear(){
+    _items ={};
+    notifyListeners();
+  }
   void addItems(String productId, String title, double price) {
     if (_items.containsKey(productId)) {
       //.. Change qty;
