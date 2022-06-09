@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/screens/routing/routing.dart';
 
 class UserProductItem extends StatelessWidget {
   const UserProductItem({Key? key, required this.title, required this.imageUrl})
@@ -8,6 +9,7 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
@@ -16,7 +18,9 @@ class UserProductItem extends StatelessWidget {
       trailing: Wrap(
         children: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(Routing.editProductScreenName);
+            },
             icon: const Icon(Icons.edit),
             color: Colors.purple,
           ),
@@ -25,6 +29,7 @@ class UserProductItem extends StatelessWidget {
             icon: const Icon(Icons.delete),
             color: Theme.of(context).errorColor,
           ),
+
         ],
       ),
     );

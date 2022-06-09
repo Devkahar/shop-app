@@ -9,6 +9,7 @@ class Routing {
   static const cartScreenName = '/cart';
   static const orderScreenName = '/order';
   static const userProductScreenName = '/user-product';
+  static const editProductScreenName = '/edit-product';
 
   static MaterialPageRoute? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
