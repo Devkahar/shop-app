@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/providers/cart.dart';
+import 'package:shop_app/providers/provider.dart';
 import 'package:shop_app/screens/routing/routing.dart';
 import 'package:shop_app/widgets/app_drawer.dart';
 import 'package:shop_app/widgets/badge.dart';
@@ -20,7 +21,16 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   bool favouriteSelected = false;
-
+  bool _inti = true;
+  @override
+  void didChangeDependencies(){
+      if(_inti){
+        Provider.of<Products>(context).fetchAndSetProduct();
+        print("Yes");
+        _inti= false;
+      }
+    super.didChangeDependencies();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
