@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
   final uuid = Uuid();
-  final List<Product> _items = [
+  List<Product> _items = [
     Product(
       id: 'p1',
       title: 'Red Shirt',
@@ -48,6 +48,7 @@ class Products with ChangeNotifier {
   List<Product> get favouriteItem {
     return [...items.where((element) => element.isFavourite)];
   }
+
   Product findById(
     String id,
   ) {
@@ -71,23 +72,45 @@ class Products with ChangeNotifier {
     );
     notifyListeners();
   }
-  Future<void> fetchAndSetProduct()async{
-    final url = Uri.parse('https://shopapp-d6ace-default-rtdb.firebaseio.com/products.json');
-    var client = http.Client();
-    try{
-      final res = await client.get(url);
-      print(json.decode(res.body));
-    }catch(error){
-      print(error);
-    }
 
+  Future<void> fetchAndSetProduct() async {
+    final url = Uri.parse(
+        'https://shopapp-d6ace-default-rtdb.firebaseio.com/products.json');
+    var client = http.Client();
+    try {
+      final res = await client.get(url);
+      final data = json.decode(res.body) as Map<String, dynamic>;
+      final List<Product> loadedList = [];
+      data.forEach(
+        (productId, productData) {
+          loadedList.add(
+            Product(
+              id: productId,
+              title: productData['title']??'',
+              description: productData['description'],
+              price: double.parse(productData['price'].toString()),
+              imageUrl: productData['imageUrl'],
+            ),
+          );
+        },
+      );
+      print("Caught Data");
+      _items = loadedList;
+      notifyListeners();
+      return Future.value();
+    } catch (error) {
+      print("Caught Error");
+      print(error);
+      return Future.value();
+    }
   }
+
   Future<void> addProduct(
     String title,
     String description,
     double price,
     String imageUrl,
-  ) async{
+  ) async {
     final id = uuid.v4();
 
     final body = {
@@ -97,16 +120,12 @@ class Products with ChangeNotifier {
       'price': price,
       'imageUrl': imageUrl,
     };
-    var url =
-    Uri.parse('https://shopapp-d6ace-default-rtdb.firebaseio.com/products.json'
-        );
+    var url = Uri.parse(
+        'https://shopapp-d6ace-default-rtdb.firebaseio.com/products.json');
     var client = http.Client();
-    try{
-      final res = await client.post(
-          url,
-          body: json.encode(body)
-      );
-      if(res!=null){
+    try {
+      final res = await client.post(url, body: json.encode(body));
+      if (res != null) {
         _items.add(
           Product(
             id: id,
@@ -119,11 +138,10 @@ class Products with ChangeNotifier {
         notifyListeners();
         return Future.value();
       }
-    }catch(error){
+    } catch (error) {
       print(error);
       throw "SomeThing Went Wrong";
     }
-
   }
 
   void deleteProduct(String id) {

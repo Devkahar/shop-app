@@ -22,13 +22,22 @@ class ProductsOverviewScreen extends StatefulWidget {
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   bool favouriteSelected = false;
   bool _inti = true;
+  bool _isLoading=false;
   @override
-  void didChangeDependencies(){
+  void didChangeDependencies() {
       if(_inti){
-        Provider.of<Products>(context).fetchAndSetProduct();
+        setState((){
+          _isLoading=true;
+        });
+        Provider.of<Products>(context).fetchAndSetProduct()
+        .then((value){
+          setState((){
+            _isLoading= false;
+          });
+        });
         print("Yes");
-        _inti= false;
       }
+      _inti= false;
     super.didChangeDependencies();
   }
   @override
@@ -36,7 +45,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Shop'),
-        actions: [
+        actions:[
           PopupMenuButton(
             onSelected: (FilterOption selectVal) {
               if (selectVal == FilterOption.onlyFavourite) {
@@ -74,7 +83,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: const AppDrawer(),
-      body: ProductGride(selectFavourite: favouriteSelected),
+      body: _isLoading? const Center(child: CircularProgressIndicator(),):ProductGride(selectFavourite: favouriteSelected),
     );
   }
 }
