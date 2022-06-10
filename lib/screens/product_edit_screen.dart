@@ -4,8 +4,8 @@ import 'package:shop_app/providers/product.dart';
 import 'package:shop_app/providers/provider.dart';
 
 class ProductEditScreen extends StatefulWidget {
-
   const ProductEditScreen({Key? key}) : super(key: key);
+
   @override
   State<ProductEditScreen> createState() => _ProductEditScreenState();
 }
@@ -16,7 +16,9 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
   final _imageUrlContoller = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  String urlPattern = r"(https?|ftp)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
+  bool _loading = false;
+  String urlPattern =
+      r"(https?|ftp)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
   bool isEditiable = false;
   Product _editProduct = Product(
     id: '',
@@ -26,21 +28,25 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
     imageUrl: '',
   );
   String imageUrl = "";
+
   @override
   void initState() {
     _imageUrlFocusNode.addListener(updateImageUrl);
     super.initState();
   }
+
   @override
   void didChangeDependencies() {
     final productId = ModalRoute.of(context)!.settings.arguments;
-    if(productId!=null){
-      final _product = Provider.of<Products>(context).items.where((element) => element.id==productId).toList()[0];
+    if (productId != null) {
+      final _product = Provider.of<Products>(context)
+          .items
+          .where((element) => element.id == productId)
+          .toList()[0];
       _editProduct = _product as Product;
-      isEditiable=true;
-      _imageUrlContoller.text= _editProduct.imageUrl;
+      isEditiable = true;
+      _imageUrlContoller.text = _editProduct.imageUrl;
     }
-
   }
 
   void updateImageUrl() {
@@ -56,28 +62,48 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
         price: _editProduct.price,
         imageUrl: imageUrl,
       );
-
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Products>(context);
-    void formSave() {
+    void formSave() async {
       final bool isValid = _form.currentState!.validate();
       if (!isValid) return;
       _form.currentState?.save();
-      if(isEditiable){
-        product.updateProduct(_editProduct.id, _editProduct.title, _editProduct.description, _editProduct.price, _editProduct.imageUrl);
+      setState((){
+        _loading= true;
+      });
+      if (isEditiable) {
+        product.updateProduct(
+            _editProduct.id,
+            _editProduct.title,
+            _editProduct.description,
+            _editProduct.price,
+            _editProduct.imageUrl,);
+        Navigator.of(context).pop();
         print("product Edited");
-      }else{
-        product.addProduct(_editProduct.title, _editProduct.description, _editProduct.price, _editProduct.imageUrl);
+      } else {
+        product
+            .addProduct(
+          _editProduct.title,
+          _editProduct.description,
+          _editProduct.price,
+          _imageUrlContoller.text,
+        ).then(
+          (val) {
+            setState((){
+              _loading= false;
+            });
+            Navigator.of(context).pop();
+          },
+        );
+
         print("Product Added");
       }
-
-      Navigator.of(context).pop();
     }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Product'),
@@ -88,7 +114,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
           ),
         ],
       ),
-      body: Padding(
+      body: _loading? const Center(child: CircularProgressIndicator()):Padding(
         padding: const EdgeInsets.all(15.0),
         child: Form(
           key: _form,
@@ -205,7 +231,9 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                         if (value!.isEmpty) {
                           return 'Please Enter Image Url';
                         }
-                        if(RegExp(urlPattern,caseSensitive: false).firstMatch(value) == null){
+                        if (RegExp(urlPattern, caseSensitive: false)
+                                .firstMatch(value) ==
+                            null) {
                           return 'Enter Valid Url';
                         }
                         return null;
