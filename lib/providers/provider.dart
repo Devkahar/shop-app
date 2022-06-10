@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/providers/product.dart';
+import 'package:uuid/uuid.dart';
 class Products with ChangeNotifier{
+  final uuid = Uuid();
   final List<Product> _items = [
     Product(
       id: 'p1',
@@ -35,16 +37,6 @@ class Products with ChangeNotifier{
       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     ),
   ];
-
-  // bool _isFavouriteSelected = false;
-  // void markIsFavourite(){
-  //   _isFavouriteSelected= true;
-  //   notifyListeners();
-  // }
-  // void markSelectAll(){
-  //   _isFavouriteSelected= false;
-  //   notifyListeners();
-  // }
   List<Product> get items{
     return [..._items];
   }
@@ -56,7 +48,17 @@ class Products with ChangeNotifier{
   Product findById(String id){
     return _items.firstWhere((element) => element.id==id);
   }
-  void addProduct(){
+  void updateProduct(String id,String title,String description,double price,String imageUrl){
+    final index = _items.indexWhere((element) => element.id == id);
+    _items[index] = Product(id: id, title: title, description: description, price: price, imageUrl: imageUrl);
+    notifyListeners();
+  }
+  void addProduct(String title,String description,double price,String imageUrl){
+    _items.add(Product(id: uuid.v4(), title: title, description: description, price: price, imageUrl: imageUrl));
+    notifyListeners();
+  }
+  void deleteProduct(String id){
+    _items.removeWhere((element) => element.id==id);
     notifyListeners();
   }
 }

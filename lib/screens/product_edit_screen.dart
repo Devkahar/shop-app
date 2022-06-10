@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop_app/providers/product.dart';
+import 'package:shop_app/providers/provider.dart';
 
 class ProductEditScreen extends StatefulWidget {
-  const ProductEditScreen({Key? key}) : super(key: key);
 
+  const ProductEditScreen({Key? key}) : super(key: key);
   @override
   State<ProductEditScreen> createState() => _ProductEditScreenState();
 }
@@ -14,8 +16,8 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
   final _imageUrlContoller = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  var urlPattern = r"(https?|ftp)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
-
+  String urlPattern = r"(https?|ftp)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
+  bool isEditiable = false;
   Product _editProduct = Product(
     id: '',
     title: '',
@@ -23,21 +25,22 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
     price: 0.0,
     imageUrl: '',
   );
-
-  // @override
-  // void dispose() {
-  //   _priceFocusNode.dispose();
-  //   _descriptionFocusNode.dispose();
-  //   _imageUrlContoller.dispose();
-  //   super.dispose();
-  // }
-
   String imageUrl = "";
-
   @override
   void initState() {
     _imageUrlFocusNode.addListener(updateImageUrl);
     super.initState();
+  }
+  @override
+  void didChangeDependencies() {
+    final productId = ModalRoute.of(context)!.settings.arguments;
+    if(productId!=null){
+      final _product = Provider.of<Products>(context).items.where((element) => element.id==productId).toList()[0];
+      _editProduct = _product as Product;
+      isEditiable=true;
+      _imageUrlContoller.text= _editProduct.imageUrl;
+    }
+
   }
 
   void updateImageUrl() {
@@ -53,21 +56,28 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
         price: _editProduct.price,
         imageUrl: imageUrl,
       );
+
     }
   }
 
-  void formSave() {
-    final bool isValid = _form.currentState!.validate();
-    if (!isValid) return;
-    _form.currentState?.save();
-    print(_editProduct.title);
-    print(_editProduct.description);
-    print(_editProduct.price);
-    print(_editProduct.imageUrl);
-  }
 
   @override
   Widget build(BuildContext context) {
+    final product = Provider.of<Products>(context);
+    void formSave() {
+      final bool isValid = _form.currentState!.validate();
+      if (!isValid) return;
+      _form.currentState?.save();
+      if(isEditiable){
+        product.updateProduct(_editProduct.id, _editProduct.title, _editProduct.description, _editProduct.price, _editProduct.imageUrl);
+        print("product Edited");
+      }else{
+        product.addProduct(_editProduct.title, _editProduct.description, _editProduct.price, _editProduct.imageUrl);
+        print("Product Added");
+      }
+
+      Navigator.of(context).pop();
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Product'),
@@ -85,6 +95,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _editProduct.title,
                 decoration: const InputDecoration(
                   labelText: 'Title',
                 ),
@@ -109,6 +120,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _editProduct.price.toString(),
                 decoration: const InputDecoration(
                   labelText: 'Price',
                 ),
@@ -141,6 +153,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _editProduct.description,
                 decoration: const InputDecoration(
                   labelText: 'Description',
                 ),
