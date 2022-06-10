@@ -11,6 +11,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   final _imageUrlContoller = TextEditingController();
+  final _imageUrlFocusNode = FocusNode();
 
   // @override
   // void dispose() {
@@ -20,6 +21,20 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
   //   super.dispose();
   // }
 
+  String imageUrl = "";
+  @override
+  void initState(){
+    _imageUrlFocusNode.addListener(updateImageUrl);
+    super.initState();
+  }
+  void updateImageUrl(){
+    if(_imageUrlContoller.text.isNotEmpty && _imageUrlContoller.text!=imageUrl){
+      setState((){
+        imageUrl=_imageUrlContoller.text;
+      });
+      print(imageUrl);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +98,14 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
                       controller: _imageUrlContoller,
-                      // focusNode: _imageUrlContoller,
+                      focusNode: _imageUrlFocusNode ,
+
+                      onEditingComplete: () {
+                        setState(() {
+                          imageUrl=_imageUrlContoller.text.isEmpty?'':_imageUrlContoller.text;
+                        });
+                        print(imageUrl);
+                      },
                     ),
                   ),
                 ],
