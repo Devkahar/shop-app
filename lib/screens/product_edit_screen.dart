@@ -104,6 +104,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
       }
     }
 
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Product'),

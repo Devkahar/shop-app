@@ -84,31 +84,35 @@ class Products with ChangeNotifier {
       'id': id,
       'title': title,
       'description': description,
-      'price': price.toString(),
+      'price': price,
       'imageUrl': imageUrl,
     };
     var url =
     Uri.parse('https://shopapp-d6ace-default-rtdb.firebaseio.com/products.json'
         );
     var client = http.Client();
-    final res = await client.post(
-      url,
-      body: json.encode(body)
-    );
-    if(res!=null){
-      _items.add(
-        Product(
-          id: id,
-          title: title,
-          description: description,
-          price: price,
-          imageUrl: imageUrl,
-        ),
+    try{
+      final res = await client.post(
+          url,
+          body: json.encode(body)
       );
-      notifyListeners();
-      return Future.value();
+      if(res!=null){
+        _items.add(
+          Product(
+            id: id,
+            title: title,
+            description: description,
+            price: price,
+            imageUrl: imageUrl,
+          ),
+        );
+        notifyListeners();
+        return Future.value();
+      }
+    }catch(error){
+      print(error);
+      throw "SomeThing Went Wrong";
     }
-
 
   }
 
