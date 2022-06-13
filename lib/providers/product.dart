@@ -17,7 +17,7 @@ class Product with ChangeNotifier{
     try{
       isFavourite = !isFavourite;
       notifyListeners();
-      final url = Uri.parse('https://shopapp-d6ace-default-rtdb.firebaseio.com/products/$id');
+      final url = Uri.parse('https://shopapp-d6ace-default-rtdb.firebaseio.com/products/$id.json');
       final client = http.Client();
       final body = {
         'isFavourite': isFavourite,

@@ -22,30 +22,31 @@ class ProductsOverviewScreen extends StatefulWidget {
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   bool favouriteSelected = false;
   bool _inti = true;
-  bool _isLoading=false;
+  bool _isLoading = false;
+
   @override
   void didChangeDependencies() {
-      if(_inti){
-        setState((){
-          _isLoading=true;
+    if (_inti) {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetProduct().then((value) {
+        setState(() {
+          _isLoading = false;
         });
-        Provider.of<Products>(context).fetchAndSetProduct()
-        .then((value){
-          setState((){
-            _isLoading= false;
-          });
-        });
-        print("Yes");
-      }
-      _inti= false;
+      });
+      print("Yes");
+    }
+    _inti = false;
     super.didChangeDependencies();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Shop'),
-        actions:[
+        actions: [
           PopupMenuButton(
             onSelected: (FilterOption selectVal) {
               if (selectVal == FilterOption.onlyFavourite) {
@@ -70,20 +71,23 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
             ],
           ),
           Consumer<Cart>(
-            builder: (_, cart, __) => Badge(
-              value: cart.totaItems.toString(),
-              child: IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(Routing.cartScreenName);
-                },
+            builder: (_, cart, __) => GestureDetector(
+              onTap: () =>
+                  Navigator.of(context).pushNamed(Routing.cartScreenName),
+              child: Badge(
+                value: cart.items.length.toString(),
+                child: const Icon(Icons.shopping_cart),
               ),
             ),
           ),
         ],
       ),
       drawer: const AppDrawer(),
-      body: _isLoading? const Center(child: CircularProgressIndicator(),):ProductGride(selectFavourite: favouriteSelected),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductGride(selectFavourite: favouriteSelected),
     );
   }
 }

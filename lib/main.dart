@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.deepOrange,
           fontFamily: 'Lato',
         ),
+        debugShowCheckedModeBanner: false,
         // onGenerateRoute: Routing.onGenerateRoute,
         routes: {
           Routing.productOverviewScreenName: (ctx) =>

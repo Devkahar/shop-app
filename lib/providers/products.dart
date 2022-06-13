@@ -133,7 +133,6 @@ class Products with ChangeNotifier {
     final id = uuid.v4();
 
     final body = {
-      'id': id,
       'title': title,
       'description': description,
       'price': price,
@@ -145,20 +144,19 @@ class Products with ChangeNotifier {
     final client = http.Client();
     try {
       final res = await client.post(url, body: json.encode(body));
-      if (res != null) {
-        _items.add(
-          Product(
-            id: id,
-            title: title,
-            description: description,
-            price: price,
-            imageUrl: imageUrl,
-            isFavourite: isFavourite,
-          ),
-        );
-        notifyListeners();
-        return Future.value();
-      }
+
+      _items.add(
+        Product(
+          id: json.decode(res.body)['name'],
+          title: title,
+          description: description,
+          price: price,
+          imageUrl: imageUrl,
+          isFavourite: isFavourite,
+        ),
+      );
+      notifyListeners();
+      return Future.value();
     } catch (error) {
       print(error);
       throw "SomeThing Went Wrong";
