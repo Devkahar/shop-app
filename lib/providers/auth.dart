@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ class Auth with ChangeNotifier {
   String _expiryDate = "";
   String _userId = "";
   final String key = "AIzaSyAY-eHIBxM2GOy2MIEKjFEycDGihsn0NuA";
-  Future<void> authenticate(String action,String email,String password,String errorMessage)async{
+  Future<void> authenticate(String action,String email,String password)async{
     final url = Uri.parse('https://identitytoolkit.googleapis.com/v1/accounts:$action?key=$key');
     final client = http.Client();
     try{
@@ -23,20 +24,32 @@ class Auth with ChangeNotifier {
             }
         ),
       );
-      _print(json.decode(response.body));
+      final responseData = json.decode(response.body);
+      if (responseData['error'] != null) {
+        throw HttpException(responseData['error']['message']);
+      }
+      _token = responseData['idToken'];
+      _userId = responseData['localId'];
+      _expiryDate = DateTime.now().add(
+        Duration(
+          seconds: int.parse(
+            responseData['expiresIn'],
+          ),
+        ),
+      ).toString();
+      notifyListeners();
     }catch(error){
-      throw errorMessage;
+      _print('..');
       _print(error);
+      throw error;
     }
   }
   Future<void> signUp(String email, String password) async {
-    String errorMessage = 'Something went wrong';
-    return authenticate('signUp', email, password,errorMessage);
+    return authenticate('signUp', email, password);
   }
 
   Future<void> logIn(String email, String password){
-    String errorMessage = 'Invalid Login Credential';
-    return authenticate('signInWithPassword', email, password,errorMessage);
+    return authenticate('signInWithPassword', email, password);
   }
   void _print(Object message){
     if(kDebugMode){
