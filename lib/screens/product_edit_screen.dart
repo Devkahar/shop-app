@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/product.dart';
-import 'package:shop_app/providers/provider.dart';
+import 'package:shop_app/providers/products.dart';
 
 class ProductEditScreen extends StatefulWidget {
   const ProductEditScreen({Key? key}) : super(key: key);
@@ -26,6 +26,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
     description: '',
     price: 0.0,
     imageUrl: '',
+
   );
   String imageUrl = "";
 
@@ -82,7 +83,9 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
             _editProduct.title,
             _editProduct.description,
             _editProduct.price,
-            _editProduct.imageUrl,);
+            _editProduct.imageUrl,
+            _editProduct.isFavourite,
+        );
         Navigator.of(context).pop();
         print("product Edited");
       } else {
@@ -92,6 +95,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
           _editProduct.description,
           _editProduct.price,
           _imageUrlContoller.text,
+          _editProduct.isFavourite,
         ).then(
           (val) {
             setState((){
@@ -144,6 +148,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     description: _editProduct.description,
                     price: _editProduct.price,
                     imageUrl: _editProduct.imageUrl,
+                    isFavourite: _editProduct.isFavourite,
                   );
                 },
               ),
@@ -177,6 +182,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     description: _editProduct.description,
                     price: double.parse(value as String),
                     imageUrl: _editProduct.imageUrl,
+                    isFavourite: _editProduct.isFavourite,
                   );
                 },
               ),
@@ -202,6 +208,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     description: value as String,
                     price: _editProduct.price,
                     imageUrl: _editProduct.imageUrl,
+                    isFavourite: _editProduct.isFavourite,
                   );
                 },
               ),
@@ -218,6 +225,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                         : FittedBox(
                             fit: BoxFit.contain,
                             child: Image.network(_imageUrlContoller.text),
+
                           ),
                   ),
                   Expanded(
@@ -253,6 +261,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                           description: _editProduct.description,
                           price: _editProduct.price,
                           imageUrl: imageUrl,
+                          isFavourite: _editProduct.isFavourite,
                         );
                         print(imageUrl);
                       },

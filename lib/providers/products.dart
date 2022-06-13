@@ -61,18 +61,21 @@ class Products with ChangeNotifier {
     String description,
     double price,
     String imageUrl,
-  ) async{
-    final body={
+    bool isFavourite,
+  ) async {
+    final body = {
       'id': id,
-      'title':title,
-      'description':description,
+      'title': title,
+      'description': description,
       'price': price,
       'imageUrl': imageUrl,
+      'isFavourite': isFavourite,
     };
-    try{
-      final url = Uri.parse('https://shopapp-d6ace-default-rtdb.firebaseio.com/products/$id.json');
+    try {
+      final url = Uri.parse(
+          'https://shopapp-d6ace-default-rtdb.firebaseio.com/products/$id.json');
       final client = http.Client();
-      await client.patch(url,body: json.encode(body));
+      await client.patch(url, body: json.encode(body));
       final index = _items.indexWhere((element) => element.id == id);
       _items[index] = Product(
         id: id,
@@ -80,9 +83,10 @@ class Products with ChangeNotifier {
         description: description,
         price: price,
         imageUrl: imageUrl,
+        isFavourite: isFavourite,
       );
       notifyListeners();
-    }catch(error){
+    } catch (error) {
       print(error);
     }
   }
@@ -100,7 +104,7 @@ class Products with ChangeNotifier {
           loadedList.add(
             Product(
               id: productId,
-              title: productData['title']??'',
+              title: productData['title'] ?? '',
               description: productData['description'],
               price: double.parse(productData['price'].toString()),
               imageUrl: productData['imageUrl'],
@@ -124,6 +128,7 @@ class Products with ChangeNotifier {
     String description,
     double price,
     String imageUrl,
+    bool isFavourite,
   ) async {
     final id = uuid.v4();
 
@@ -133,6 +138,7 @@ class Products with ChangeNotifier {
       'description': description,
       'price': price,
       'imageUrl': imageUrl,
+      'isFavourite': isFavourite,
     };
     final url = Uri.parse(
         'https://shopapp-d6ace-default-rtdb.firebaseio.com/products.json');
@@ -147,6 +153,7 @@ class Products with ChangeNotifier {
             description: description,
             price: price,
             imageUrl: imageUrl,
+            isFavourite: isFavourite,
           ),
         );
         notifyListeners();
@@ -158,21 +165,21 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) async{
+  void deleteProduct(String id) async {
     int deletedItemIdx = _items.indexWhere((element) => element.id == id);
     Product storeDeletedItem = _items[deletedItemIdx];
-    try{
+    try {
       _items.removeWhere((element) => element.id == id);
       notifyListeners();
       final url = Uri.parse(
           'https://shopapp-d6ace-default-rtdb.firebaseio.com/products/$id.json');
       final client = http.Client();
       final res = await client.delete(url);
-      if(res.statusCode>=400){
+      if (res.statusCode >= 400) {
         // Throw Error;
         throw 'Failed To delete Item';
       }
-    }catch(error){
+    } catch (error) {
       print(error);
       _items.insert(deletedItemIdx, storeDeletedItem);
       notifyListeners();

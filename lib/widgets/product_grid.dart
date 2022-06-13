@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_app/widgets/product_item.dart';
 import '../providers/product.dart';
 import 'package:provider/provider.dart';
-import '../providers/provider.dart';
+import '../providers/products.dart';
 
 class ProductGride extends StatelessWidget {
   bool selectFavourite;

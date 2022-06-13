@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/screens/routing/routing.dart';
 
-import '../providers/provider.dart';
+import '../providers/products.dart';
 
 class UserProductItem extends StatelessWidget {
   const UserProductItem({Key? key,required this.id, required this.title, required this.imageUrl})
