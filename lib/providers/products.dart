@@ -104,7 +104,7 @@ class Products with ChangeNotifier {
           loadedList.add(
             Product(
               id: productId,
-              title: productData['title'] ?? '',
+              title: productData['title'],
               description: productData['description'],
               price: double.parse(productData['price'].toString()),
               imageUrl: productData['imageUrl'],
@@ -117,7 +117,7 @@ class Products with ChangeNotifier {
       notifyListeners();
       return Future.value();
     } catch (error) {
-      print("Caught Error");
+      print("...Caught Error");
       print(error);
       return Future.value();
     }
