@@ -47,6 +47,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
       isEditiable = true;
       _imageUrlContoller.text = _editProduct.imageUrl;
     }
+    super.didChangeDependencies();
   }
 
   void updateImageUrl() {
