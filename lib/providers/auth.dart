@@ -11,13 +11,13 @@ class Auth with ChangeNotifier {
   String  _userId = "";
   final String key = "AIzaSyAY-eHIBxM2GOy2MIEKjFEycDGihsn0NuA";
   bool get isAuth{
-    return token!=null;
+    return token!="";
   }
   String? get token{
-    if(_expiryDate!=null && _expiryDate!.isAfter(DateTime.now())){
+    if(_expiryDate!=null && _expiryDate!.isAfter(DateTime.now()) && _token!=""){
       return _token;
     }
-    return null;
+    return "";
   }
   String? get userId{
     return _userId;
@@ -62,6 +62,12 @@ class Auth with ChangeNotifier {
 
   Future<void> logIn(String email, String password){
     return authenticate('signInWithPassword', email, password);
+  }
+  void logOut(){
+    _token = "";
+    // _expiryDate=null;
+    _userId = "";
+    notifyListeners();
   }
   void _print(Object message){
     if(kDebugMode){
