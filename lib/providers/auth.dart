@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,6 +10,7 @@ class Auth with ChangeNotifier {
   String _token = "";
   DateTime? _expiryDate;
   String  _userId = "";
+  Timer? authTimer;
   final String key = "AIzaSyAY-eHIBxM2GOy2MIEKjFEycDGihsn0NuA";
   bool get isAuth{
     return token!="";
@@ -49,6 +51,7 @@ class Auth with ChangeNotifier {
           ),
         ),
       );
+      _autoLogOut();
       notifyListeners();
     }catch(error){
       _print('..');
@@ -68,6 +71,13 @@ class Auth with ChangeNotifier {
     // _expiryDate=null;
     _userId = "";
     notifyListeners();
+  }
+  void _autoLogOut(){
+    if(authTimer!=null){
+      authTimer?.cancel();
+    }
+    final timeToExpire = _expiryDate?.difference(DateTime.now()).inSeconds??0;
+    authTimer=Timer(Duration(seconds: timeToExpire),logOut);
   }
   void _print(Object message){
     if(kDebugMode){
