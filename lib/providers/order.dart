@@ -22,12 +22,13 @@ class OrderItems {
 
 class Order with ChangeNotifier {
   final String token;
+  final String userId;
   List<OrderItems> orders = [];
-  Order({required this.token,required this.orders});
+  Order( {required this.token,required this.userId,required this.orders});
 
   void fetchAndSetOrder() async {
     final url = Uri.parse(
-        'https://shopapp-d6ace-default-rtdb.firebaseio.com/orders.json?auth=$token');
+        'https://shopapp-d6ace-default-rtdb.firebaseio.com/orders/$userId.json?auth=$token');
     final client = http.Client();
     try {
       final res = await client.get(url);
@@ -80,7 +81,7 @@ class Order with ChangeNotifier {
     };
     try {
       final url = Uri.parse(
-          'https://shopapp-d6ace-default-rtdb.firebaseio.com/orders.json?auth=$token');
+          'https://shopapp-d6ace-default-rtdb.firebaseio.com/orders/$userId.json?auth=$token');
       final client = http.Client();
       final res = await client.post(url, body: json.encode(body));
       print(json.decode(res.body));
