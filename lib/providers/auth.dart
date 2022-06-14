@@ -7,9 +7,21 @@ import 'package:http/http.dart' as http;
 
 class Auth with ChangeNotifier {
   String _token = "";
-  String _expiryDate = "";
-  String _userId = "";
+  DateTime? _expiryDate;
+  String  _userId = "";
   final String key = "AIzaSyAY-eHIBxM2GOy2MIEKjFEycDGihsn0NuA";
+  bool get isAuth{
+    return token!=null;
+  }
+  String? get token{
+    if(_expiryDate!=null && _expiryDate!.isAfter(DateTime.now())){
+      return _token;
+    }
+    return null;
+  }
+  String? get userId{
+    return _userId;
+  }
   Future<void> authenticate(String action,String email,String password)async{
     final url = Uri.parse('https://identitytoolkit.googleapis.com/v1/accounts:$action?key=$key');
     final client = http.Client();
@@ -36,7 +48,7 @@ class Auth with ChangeNotifier {
             responseData['expiresIn'],
           ),
         ),
-      ).toString();
+      );
       notifyListeners();
     }catch(error){
       _print('..');

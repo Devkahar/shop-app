@@ -28,38 +28,51 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => Auth(),
         ),
-        ChangeNotifierProvider(
-          create: (ctx) => Products(),
+        ChangeNotifierProxyProvider<Auth, Products>(
+          create: (ctx) => Products(products: [], token: '', userId: ''),
+          update: (ctx, auth, prevProduct) => Products(
+            products: prevProduct == null ? [] : prevProduct.items,
+            token: auth.token as String,
+            userId: auth.userId as String,
+          ),
         ),
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
         ),
-        ChangeNotifierProvider(
-          create: (ctx) => Order(),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.purple,
-          primaryColor: Colors.deepOrange,
-          fontFamily: 'Lato',
-          textTheme: const TextTheme(
-            titleLarge: TextStyle(color: Colors.white),
+        ChangeNotifierProxyProvider<Auth, Order>(
+          create: (ctx) => Order(token: '', orders: []),
+          update: (ctx, auth, prevOrders) => Order(
+            orders: prevOrders == null ? [] : prevOrders.orders,
+            token: auth.token as String,
           ),
         ),
-        debugShowCheckedModeBanner: false,
-        // onGenerateRoute: Routing.onGenerateRoute,
-        routes: {
-          Routing.productOverviewScreenName: (ctx) =>
-              const ProductsOverviewScreen(),
-          Routing.authScreen: (ctx) => const AuthScreen(),
-          Routing.productDetailScreenName: (ctx) => const ProductDetailScreen(),
-          Routing.cartScreenName: (ctx) => const CartScreen(),
-          Routing.orderScreenName: (ctx) => OrdersScreen(),
-          Routing.userProductScreenName: (ctx) => const UserProductScreen(),
-          Routing.editProductScreenName: (ctx) => const ProductEditScreen(),
-        },
+      ],
+      child: Consumer<Auth>(
+        builder: (ctx, auth, _) => MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.purple,
+            primaryColor: Colors.deepOrange,
+            fontFamily: 'Lato',
+            textTheme: const TextTheme(
+              titleLarge: TextStyle(color: Colors.white),
+            ),
+          ),
+          debugShowCheckedModeBanner: false,
+          // onGenerateRoute: Routing.onGenerateRoute,
+          home:
+              auth.isAuth ? const ProductsOverviewScreen() : const AuthScreen(),
+          routes: {
+            Routing.productOverviewScreenName: (ctx) =>
+                const ProductsOverviewScreen(),
+            Routing.productDetailScreenName: (ctx) =>
+                const ProductDetailScreen(),
+            Routing.cartScreenName: (ctx) => const CartScreen(),
+            Routing.orderScreenName: (ctx) => OrdersScreen(),
+            Routing.userProductScreenName: (ctx) => const UserProductScreen(),
+            Routing.editProductScreenName: (ctx) => const ProductEditScreen(),
+          },
+        ),
       ),
     );
   }

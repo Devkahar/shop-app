@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/screens/routing/routing.dart';
 import 'package:provider/provider.dart';
+import '../providers/auth.dart';
 import '../providers/product.dart';
 
 class ProductItem extends StatelessWidget {
@@ -13,6 +14,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final auth = Provider.of<Auth>(context,listen: false);
     void redirectProductDetailScreen() {
       Navigator.of(context).pushNamed(
         Routing.productDetailScreenName,
@@ -27,7 +29,7 @@ class ProductItem extends StatelessWidget {
           backgroundColor: Colors.black54,
           leading: Consumer<Product>(
             builder: (ctx, product, _) => GestureDetector(
-              onTap: () => product.toggleIsFavourite(),
+              onTap: () => product.toggleIsFavourite(auth.token,auth.userId),
               child: Icon(
                 Icons.favorite,
                 color: product.isFavourite

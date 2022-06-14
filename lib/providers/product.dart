@@ -12,17 +12,15 @@ class Product with ChangeNotifier{
   bool isFavourite;
   Product({required this.id, required this.title, required this.description, required this.price, required this.imageUrl,this.isFavourite = false});
 
-  void toggleIsFavourite()async{
+  void toggleIsFavourite(String? token,String? userId)async{
     bool oldFavourite = isFavourite;
     try{
       isFavourite = !isFavourite;
       notifyListeners();
-      final url = Uri.parse('https://shopapp-d6ace-default-rtdb.firebaseio.com/products/$id.json');
+      final url = Uri.parse('https://shopapp-d6ace-default-rtdb.firebaseio.com/userFavourites/$userId/$id.json?auth=$token');
       final client = http.Client();
-      final body = {
-        'isFavourite': isFavourite,
-      };
-      final res = await client.patch(url,body: json.encode(body));
+      final body = isFavourite;
+      final res = await client.put(url,body: json.encode(body));
       if(res.statusCode>=400){
         isFavourite= oldFavourite;
         notifyListeners();
